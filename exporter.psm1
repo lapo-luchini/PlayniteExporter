@@ -28,8 +28,9 @@ function CalculateMetrics() {
         $name = $game.Name -replace '([\\"])', '\$1'
         if ($game.Playtime -ge $minPlay) {
             ++$numP
-            "playnite_game_playtime_seconds{gameId=`"$($game.GameId)`",name=`"$name`"} $($game.Playtime)"
-            "playnite_game_sessions{gameId=`"$($game.GameId)`",name=`"$name`"} $($game.PlayCount)"
+            $labels = "{source=`"$($game.Source)`",gameId=`"$($game.GameId)`",name=`"$name`"}"
+            "playnite_game_playtime_seconds$labels $($game.Playtime)"
+            "playnite_game_sessions$labels         $($game.PlayCount)"
         }
     }
     End {
@@ -42,18 +43,19 @@ function CalculateMetrics() {
 
 function SaveMetrics() {
     # https://playnite.link/docs/api/Playnite.SDK.Models.Game.html
-    $PlayniteApi.Database.Games | Select-Object GameId, Name, Playtime, PlayCount | Sort-Object Name, GameId | CalculateMetrics | Out-File $textFile -Encoding utf8
+    $PlayniteApi.Database.Games | `
+        Select-Object Source, GameId, Name, Playtime, PlayCount | `
+        CalculateMetrics | `
+        Out-File $textFile -Encoding utf8
 }
 
-function OnApplicationStarted() { SaveMetrics }
-function OnApplicationStopped() { SaveMetrics }
-function OnLibraryUpdated() { SaveMetrics }
-function OnGameStopped() { SaveMetrics }
+function OnApplicationStarted() { param($arg1) SaveMetrics }
+function OnApplicationStopped() { param($arg1) SaveMetrics }
+function OnLibraryUpdated() { param($arg1) SaveMetrics }
+function OnGameStopped() { param($arg1) SaveMetrics }
 
 function ExportLibrary() {
-    param(
-        $scriptMainMenuItemActionArgs
-    )
+    param($arg1)
     SaveMetrics
     # $path = $PlayniteApi.Dialogs.SaveFile("OpenMetrics|*.prom|CSV|*.csv|Formatted TXT|*.txt")
     # if ($path) {
@@ -69,9 +71,7 @@ function ExportLibrary() {
 }
 
 function GetMainMenuItems() {
-    param(
-        $menuArgs
-    )
+    param($arg1)
     $menuItem = New-Object Playnite.SDK.Plugins.ScriptMainMenuItem
     $menuItem.Description = "Export OpenMetrics"
     $menuItem.FunctionName = "ExportLibrary"
