@@ -1,0 +1,6 @@
+﻿Id: exporter.psm1_24048eaa-715e-4d58-a094-2ab41d56daa5
+Name: Playnite Exporter
+Author: Lapo Luchini <lapo@lapo.it>
+Version: 1.0
+Module: exporter.psm1
+Type: Script
