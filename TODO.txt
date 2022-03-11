@@ -1,0 +1,2 @@
+KNOWN BUGS:
+- some games are present multiple times in the list, and Windows Exporter chokes on that
