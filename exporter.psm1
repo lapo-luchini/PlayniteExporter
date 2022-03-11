@@ -12,7 +12,9 @@ function CalculateMetrics() {
         "# TYPE playnite_game_total gauge"
         "# HELP playnite_game_played_total Total games with at least 5 minutes of play time."
         "# TYPE playnite_game_played_total gauge"
-        "# HELP playnite_game_playtime_seconds single game playtime in seconds."
+        "# HELP playnite_game_sessions Single game number of game sessions."
+        "# TYPE playnite_game_sessions gauge"
+        "# HELP playnite_game_playtime_seconds Single game playtime in seconds."
         "# TYPE playnite_game_playtime_seconds gauge"
         "# HELP playnite_game_playtime_seconds_total Total playtime in seconds."
         "# TYPE playnite_game_playtime_seconds_total gauge"
@@ -26,7 +28,8 @@ function CalculateMetrics() {
         $name = $game.Name -replace '([\\"])', '\$1'
         if ($game.Playtime -ge $minPlay) {
             ++$numP
-            "playnite_game_playtime_seconds{game=`"$name`"} $time"
+            "playnite_game_playtime_seconds{gameId=`"$($game.GameId)`",name=`"$name`"} $($game.Playtime)"
+            "playnite_game_sessions{gameId=`"$($game.GameId)`",name=`"$name`"} $($game.PlayCount)"
         }
     }
     End {
@@ -38,7 +41,8 @@ function CalculateMetrics() {
 }
 
 function SaveMetrics() {
-    $PlayniteApi.Database.Games | Select Name, Source, Playtime | CalculateMetrics | Out-File $textFile -Encoding utf8
+    # https://playnite.link/docs/api/Playnite.SDK.Models.Game.html
+    $PlayniteApi.Database.Games | Select-Object GameId, Name, Playtime, PlayCount | Sort-Object Name, GameId | CalculateMetrics | Out-File $textFile -Encoding utf8
 }
 
 function OnApplicationStarted() { SaveMetrics }
