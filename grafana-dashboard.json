@@ -61,6 +61,7 @@
       }
     ]
   },
+  "description": "Playnite gaming statistics",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -575,7 +576,10 @@
   ],
   "schemaVersion": 34,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "gaming",
+    "playnite"
+  ],
   "templating": {
     "list": []
   },
@@ -585,8 +589,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Playtime",
+  "title": "Playnite",
   "uid": "AsNLl6Lnk",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
