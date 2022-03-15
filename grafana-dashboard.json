@@ -206,20 +206,16 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "s"
+          "unit": "hours"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "Value"
             },
             "properties": [
               {
@@ -245,7 +241,13 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
       },
       "pluginVersion": "8.3.4",
       "targets": [
@@ -255,7 +257,7 @@
             "uid": "${DS_VICTORIAMETRICS}"
           },
           "exemplar": false,
-          "expr": "sort_desc(max(playnite_game_playtime_seconds) by (name))",
+          "expr": "sort_desc(max(playnite_game_playtime_seconds) by (name))/3600",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -487,7 +489,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "hours"
         },
         "overrides": [
           {
@@ -519,7 +521,13 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
       },
       "pluginVersion": "8.3.4",
       "targets": [
@@ -529,7 +537,7 @@
             "uid": "${DS_VICTORIAMETRICS}"
           },
           "exemplar": false,
-          "expr": "sort_desc(max(increase(playnite_game_playtime_seconds[1w])) by (name)) > 0",
+          "expr": "sort_desc(max(increase(playnite_game_playtime_seconds[1w])) by (name))/3600 > 0",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -579,6 +587,6 @@
   "timezone": "",
   "title": "Playtime",
   "uid": "AsNLl6Lnk",
-  "version": 4,
+  "version": 7,
   "weekStart": ""
 }
