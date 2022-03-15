@@ -1,4 +1,4 @@
-$textFile = 'C:\Program Files\windows_exporter\textfile_inputs\playnite.prom'
+﻿$textFile = 'C:\Program Files\windows_exporter\textfile_inputs\playnite.prom'
 $minPlay = 300
 
 function CalculateMetrics() {
@@ -8,6 +8,7 @@ function CalculateMetrics() {
         $game
     )
     Begin {
+        $__logger.Info("Updating metrics…")
         "# HELP playnite_game_total Total games."
         "# TYPE playnite_game_total gauge"
         "# HELP playnite_game_played_total Total games with at least 5 minutes of play time."
