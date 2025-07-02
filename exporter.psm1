@@ -1,4 +1,5 @@
-﻿$textFile = 'C:\Program Files\windows_exporter\textfile_inputs\playnite.prom'
+﻿# $textFile = 'C:\Program Files\windows_exporter\textfile_inputs\playnite.prom'
+$textFile = 'C:\ProgramData\scoop\apps\windows_exporter\current\textfile_inputs\playnite.prom'
 $minPlay = 300
 
 function CalculateMetrics() {
@@ -8,7 +9,8 @@ function CalculateMetrics() {
         $game
     )
     Begin {
-        $__logger.Info("Updating metrics…")
+        $user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name -replace '([\\"])', '\$1'
+        $__logger.Info("Updating metrics for user: $user")
         "# HELP playnite_game_total Total games."
         "# TYPE playnite_game_total gauge"
         "# HELP playnite_game_played_total Total games with at least 5 minutes of play time."
