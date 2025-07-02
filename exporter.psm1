@@ -21,26 +21,35 @@ function CalculateMetrics() {
         "# TYPE playnite_game_playtime_seconds gauge"
         "# HELP playnite_game_playtime_seconds_total Total playtime in seconds."
         "# TYPE playnite_game_playtime_seconds_total gauge"
-        $num = 0
-        $numP = 0
-        $time = 0
+        $sourceStats = @{}
     }
     Process {
-        ++$num
-        $time += $game.Playtime
+        $source = $game.Source
+        if ([string]::IsNullOrEmpty($source)) {
+            $source = "Unknown"
+        }
         $name = $game.Name -replace '([\\"])', '\$1'
+        if (-not $sourceStats.ContainsKey($source)) {
+            $sourceStats[$source] = @{ total = 0; played = 0; time = 0 }
+        }
+        $sourceStats[$source].total++
+        $sourceStats[$source].time += $game.Playtime
         if ($game.Playtime -ge $minPlay) {
-            ++$numP
-            $labels = "{source=`"$($game.Source)`",gameId=`"$($game.GameId)`",name=`"$name`"}"
+            $sourceStats[$source].played++
+            $labels = "{source=`"$source`",gameId=`"$($game.GameId)`",name=`"$name`"}"
             "playnite_game_playtime_seconds$labels $($game.Playtime)"
             "playnite_game_sessions$labels         $($game.PlayCount)"
         }
     }
     End {
-        $__logger.Info("Calculated metrics: total $num played $numP playtime $time")
-        "playnite_game_total $num"
-        "playnite_game_played_total $numP"
-        "playnite_game_playtime_seconds_total $time"
+        foreach ($source in $sourceStats.Keys) {
+            $__logger.Info("Calculated metrics: source $source total $num played $numP playtime $time")
+            $stats = $sourceStats[$source]
+            $labels = "{source=`"$source`"}"
+            "playnite_game_total$labels $($stats.total)"
+            "playnite_game_played_total$labels $($stats.played)"
+            "playnite_game_playtime_seconds_total$labels $($stats.time)"
+        }
     }
 }
 
